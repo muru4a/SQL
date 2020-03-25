@@ -130,3 +130,41 @@ For example, given the above Logs table, 1 is the only number that appears conse
 +------------------------+
 | 1                            |
 +————————————+
+                                                     
+SQL:
+
+Select l1.Num as ConsecutiveNums from Logs l1
+Join logs l2 ON
+L2.Num =l1.Num
+And l2.id =l1.id+1
+Join Logs l3 ON
+l3.Num =l2.Num
+And l3.id =l2.id +1
+Group by l1.Num;
+                                                     
+6. # Employees earning more than their Managers 
+Question: The Employee table holds all employees including their managers. Every employee has an Id, and there is also a column for the manager Id. Given the Employee table, write a SQL query that finds out employees who earn more than their managers. 
+
+Table: Employees
++----+--------+---------+---------------+
+| Id | Name  | Salary | ManagerId |
++----+--------+---------+---------------+
+| 1  | Joe   | 70000  | 3                 |
+| 2  | Henry | 80000  | 4               |
+| 3  | Sam   | 60000  | NULL        |
+| 4  | Max   | 90000  | NULL         |
++----+--------+---------+---------------+
+
+For the above table, Joe is the only employee who earns more than his manager.
++----------+
+| Employee |
++----------+
+| Joe      |
++—————+
+
+SQL:
+
+Select Name from Employees e join Employees m on
+e.ManagerId = m.Id 
+And e.ManagerId is not null
+And e.Salary > m.Salary;                                                    
