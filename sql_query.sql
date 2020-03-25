@@ -167,4 +167,146 @@ SQL:
 Select Name from Employees e join Employees m on
 e.ManagerId = m.Id 
 And e.ManagerId is not null
-And e.Salary > m.Salary;                                                    
+And e.Salary > m.Salary; 
+                                                     
+
+7. # Duplicate emails 
+Question: Write a SQL query to find all duplicate emails in a table named Person.
+
+Table: Person
++----+-------------+
+| Id | Email        |
++----+-------------+
+| 1  | a@b.com |
+| 2  | c@d.com |
+| 3  | a@b.com |
++----+------------+
+
+For example, your query should return the following for the above table:
++-------------+
+| Email       |
++-------------+
+| a@b.com |
++——————+
+
+SQL:
+
+Select Email from Person group by Email having count(*)>1;
+
+
+8. # Customers who never order 
+Question: Suppose that a website contains two tables, the Customers table and the Orders table. Write a SQL query to find all customers who never order anything.
+
+Table: Customers.
++----+-------+
+| Id | Name  |
++----+-------+
+| 1  | Joe     |
+| 2  | Henry |
+| 3  | Sam   |
+| 4  | Max    |
++----+-------+
+
+Table: Orders.
++----+---------------+
+| Id | CustomerId |
++----+---------------+
+| 1  | 3                |
+| 2  | 1                |
++----+--------------+
+
+Using the above tables as example, return the following:
++-----------+
+| Customers |
++-----------+
+| Henry     |
+| Max       |
++—————+
+
+SQL:
+
+Select c.Name from Customers c left join Order o on
+c.id = o.CustomerId
+Where o.CustomerId is Null;
+
+9. # Department Highest Salary
+
+The Employee table holds all employees. Every employee has an Id, a salary, and there is also a column for the department Id.
++----+---------+---------+-------------------+
+| Id  | Name  | Salary | DepartmentId |
++----+---------+---------+-------------------+
+| 1   | Joe      | 70000  | 1                   |
+| 2   | Jim      | 90000  | 1                   |
+| 3   | Henry  | 80000  | 2                   |
+| 4   | Sam    | 60000  | 2                   |
+| 5   | Max     | 90000  | 1                  |
++----+---------+----------+-----------------+
+
+The Department table holds all departments of the company.
++----+------------+
+| Id  | Name     |
++----+------------+
+| 1    | IT           |
+| 2    | Sales     |
++----+------------+
+
+Write a SQL query to find employees who have the highest salary in each of the departments. For the above tables, your SQL query should return the following rows (order of rows does not matter).
++----------------+--------------+---------+
+| Department | Employee | Salary |
++----------------+--------------+---------+
+| IT                | Max           | 90000  |
+| IT                | Jim            | 90000  |
+| Sales          | Henry        | 80000  |
++----------------+--------------+—————+
+
+SQL:
+
+Select Department, Employee,Salary from Employee e 
+Join Department d on e.DepartmentId =d.id
+Join (select DepartmentId,max(Salary) as mSalary from Employee group by DepartmentId ) m
+On m.DepartmentId =e.DepartmentId
+And m.mSalary=e.Salary;
+
+10. # Department Top Three Salaries    
+The Employee table holds all employees. Every employee has an Id, and there is also a column for the department Id.
+
++----+-------+--------+--------------+
+| Id | Name  | Salary | DepartmentId |
++----+-------+--------+--------------+
+| 1  | Joe   | 85000  | 1            |
+| 2  | Henry | 80000  | 2            |
+| 3  | Sam   | 60000  | 2            |
+| 4  | Max   | 90000  | 1            |
+| 5  | Janet | 69000  | 1            |
+| 6  | Randy | 85000  | 1            |
+| 7  | Will  | 70000  | 1            |
++----+-------+--------+--------------+
+The Department table holds all departments of the company.
+
++----+----------+
+| Id | Name     |
++----+----------+
+| 1  | IT       |
+| 2  | Sales    |
++----+----------+
+Write a SQL query to find employees who earn the top three salaries in each of the department. For the above tables, your SQL query should return the following rows (order of rows does not matter).
+
++------------+----------+--------+
+| Department | Employee | Salary |
++------------+----------+--------+
+| IT         | Max      | 90000  |
+| IT         | Randy    | 85000  |
+| IT         | Joe      | 85000  |
+| IT         | Will     | 70000  |
+| Sales      | Henry    | 80000  |
+| Sales      | Sam      | 60000  |
++------------+----------+————+
+
+SQL:
+Select Department,Employee,Salary from 
+(Select d.name as Department, e.name as Employee, e.Salary as Salary, 
+ dense_rank () over( partition by Department order by d.name,e.salary) as rank
+From Employee e join Department d on
+E.DepartmentId =d.id ) a
+Where a.rank <=3;                                                     
+                                                     
